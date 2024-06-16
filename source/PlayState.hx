@@ -292,9 +292,10 @@ class PlayState extends MusicBeatState
 
 	var songLength:Float = 0;
 
-	#if desktop
+
 	// Discord RPC variables
 	var storyDifficultyText:String = "";
+	#if desktop
 	var detailsText:String = "";
 	var detailsPausedText:String = "";
 	#end
@@ -806,8 +807,8 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.shaders)
 		{
 			staticlol = new StaticShader();
-			camGame.filters = [new ShaderFilter(staticlol)];
-			camCache.filters = [new ShaderFilter(staticlol)];
+			camGame.setFilters([new ShaderFilter(staticlol)]);
+			camCache.setFilters([new ShaderFilter(staticlol)]);
 			staticlol.alpha.value = [staticAlpha];
 		}
 
@@ -4970,12 +4971,10 @@ class PlayState extends MusicBeatState
 					spr.animation.play('drip');
 				}
 			}
-#if desktop
 			if (storyDifficultyText == 'Unfair' && !note.isSustainNote && health >= 0.3)
 			{
 				health -= 0.01;
 			}
-#end
 
 			char.playAnim(animToPlay, true);
 			char.holdTimer = 0;
