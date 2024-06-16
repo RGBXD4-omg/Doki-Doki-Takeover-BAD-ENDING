@@ -50,17 +50,11 @@ class HealthIcon extends FlxSprite
 			flipX = false;
 			var xmlPath:String = 'images/' + name + '.xml';
 			var path:String = '';
-			#if MODS_ALLOWED
-			path = Paths.modFolders(xmlPath);
-			if (!FileSystem.exists(path))
-				path = Paths.getPreloadPath(xmlPath);
-			if (FileSystem.exists(path))
-				isAnimated = true;
-			#else
+		
 			path = Paths.getPreloadPath(xmlPath);
 			if (Assets.exists(path))
 				isAnimated = true;
-			#end
+			
 
 			trace(isAnimated);
 

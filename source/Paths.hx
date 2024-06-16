@@ -23,7 +23,7 @@ import flash.media.Sound;
 using StringTools;
 
 class Paths
-{	
+{
 	inline public static var SOUND_EXT = "ogg";
 	inline public static var VIDEO_EXT = "mp4";
 
@@ -225,7 +225,6 @@ class Paths
 	static public function getTextFromFile(key:String):String
 	{
 		#if sys
-
 		if (FileSystem.exists(getPreloadPath(key)))
 			return File.getContent(getPreloadPath(key));
 
@@ -249,13 +248,11 @@ class Paths
 
 	inline static public function font(key:String)
 	{
-		
 		return 'assets/fonts/$key';
 	}
 
 	inline static public function fileExists(key:String, type:AssetType, ?library:String)
 	{
-
 		if (OpenFlAssets.exists(Paths.getPath(key, type)))
 		{
 			return true;
@@ -265,22 +262,13 @@ class Paths
 
 	inline static public function getSparrowAtlas(key:String, ?library:String):FlxAtlasFrames
 	{
-		var graphic:FlxGraphic = Paths.image(key, library);
-		var xmlExists:Bool = false;
-		if (FileSystem.exists(modsXml(key)))
-		{
-			xmlExists = true;
-		}
-		
+
 		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
-		
 	}
 
 	inline static public function getPackerAtlas(key:String, ?library:String)
 	{
-		
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
-		
 	}
 
 	inline static public function formatToSongPath(path:String)
@@ -293,8 +281,6 @@ class Paths
 
 	public static function returnGraphic(key:String, ?library:String)
 	{
-		
-
 		var path = getPath('images/$key.png', IMAGE, library);
 		if (OpenFlAssets.exists(path, IMAGE))
 		{
@@ -323,7 +309,6 @@ class Paths
 
 	public static function returnSound(path:String, key:String, ?library:String)
 	{
-		
 		// I hate this so god damn much
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
 		gottenPath = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);

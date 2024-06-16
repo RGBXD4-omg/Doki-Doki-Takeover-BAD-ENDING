@@ -5,9 +5,8 @@ import flixel.util.FlxSave;
 #if sys
 import sys.io.File;
 import sys.FileSystem;
-#else
-import openfl.utils.Assets;
 #end
+import openfl.utils.Assets;
 
 using StringTools;
 

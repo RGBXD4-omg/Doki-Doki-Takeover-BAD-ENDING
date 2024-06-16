@@ -50,6 +50,9 @@ import DialogueBoxPsych;
 #if sys
 import sys.FileSystem;
 #end
+#if VIDEOS_ALLOWED
+import VideoHandler;
+#end
 
 using StringTools;
 
@@ -919,8 +922,7 @@ class PlayState extends MusicBeatState
 		#if LUA_ALLOWED
 		var filesPushed:Array<String> = [];
 		var foldersToCheck:Array<String> = [Paths.getPreloadPath('scripts/')];
-		#end
-
+#end
 
 		// STAGE SCRIPTS
 		#if LUA_ALLOWED
@@ -1074,7 +1076,7 @@ class PlayState extends MusicBeatState
 		{
 		
 			{
-				luaToLoad = Paths.getPreloadPath('custom_notetypes/' + notetype + '.lua');
+				var luaToLoad = Paths.getPreloadPath('custom_notetypes/' + notetype + '.lua');
 				if (FileSystem.exists(luaToLoad))
 				{
 					luaArray.push(new FunkinLua(luaToLoad));
@@ -1085,7 +1087,7 @@ class PlayState extends MusicBeatState
 		{
 	
 			{
-				luaToLoad = Paths.getPreloadPath('custom_events/' + event + '.lua');
+				var luaToLoad = Paths.getPreloadPath('custom_events/' + event + '.lua');
 				if (FileSystem.exists(luaToLoad))
 				{
 					luaArray.push(new FunkinLua(luaToLoad));
@@ -1480,12 +1482,7 @@ class PlayState extends MusicBeatState
 		#if LUA_ALLOWED
 		var doPush:Bool = false;
 		var luaFile:String = 'characters/' + name + '.lua';
-		if (FileSystem.exists(Paths.modFolders(luaFile)))
-		{
-			luaFile = Paths.modFolders(luaFile);
-			doPush = true;
-		}
-		else
+		
 		{
 			luaFile = Paths.getPreloadPath(luaFile);
 			if (FileSystem.exists(luaFile))
@@ -4973,11 +4970,12 @@ class PlayState extends MusicBeatState
 					spr.animation.play('drip');
 				}
 			}
-
+#if desktop
 			if (storyDifficultyText == 'Unfair' && !note.isSustainNote && health >= 0.3)
 			{
 				health -= 0.01;
 			}
+#end
 
 			char.playAnim(animToPlay, true);
 			char.holdTimer = 0;
