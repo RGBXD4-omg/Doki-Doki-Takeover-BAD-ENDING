@@ -18,10 +18,10 @@ import lime.app.Application;
 import haxe.CallStack;
 import haxe.io.Path;
 import openfl.events.UncaughtErrorEvent;
+#end
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.Process;
-#end
 
 using StringTools;
 
