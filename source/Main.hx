@@ -38,7 +38,7 @@ class Main extends Sprite
 	};
 
 	public static var fpsVar:FPSCounter;
-	public static function var:String = lime.system.System.applicationStorageDirectory;
+	public static var path:String = lime.system.System.applicationStorageDirectory;
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
 	
