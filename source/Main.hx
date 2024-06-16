@@ -13,10 +13,10 @@ import openfl.events.Event;
 import Discord.DiscordClient;
 #end
 // crash handler stuff
+import lime.app.Application;
 #if CRASH_HANDLER
 import haxe.CallStack;
 import haxe.io.Path;
-import lime.app.Application;
 import openfl.events.UncaughtErrorEvent;
 import sys.FileSystem;
 import sys.io.File;
@@ -38,9 +38,16 @@ class Main extends Sprite
 	};
 
 	public static var fpsVar:FPSCounter;
+	public static function var:String = lime.system.System.applicationStorageDirectory;
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
+	
+        static final losvideos:Array<String> = [
+		"intro",
+		"ending",
+	];
 
+	
 	public static function main():Void
 	{
 		Lib.current.addChild(new Main());
@@ -49,6 +56,8 @@ class Main extends Sprite
 	public function new()
 	{
 		super();
+
+		Generic.initCrashHandler()
 
 		if (stage != null)
 		{
@@ -87,13 +96,22 @@ class Main extends Sprite
 		ClientPrefs.loadDefaultKeys();
 		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
-		#if !mobile
+	
 		fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
 
 		if (fpsVar != null)
 			fpsVar.visible = ClientPrefs.showFPS;
-		#end
+
+		Generic.mode = ROOTDATA;
+		
+		if (!FileSystem.exists(Generic.returnPath() + 'assets/videos')) {
+			FileSystem.createDirectory(Generic.returnPath() + 'assets/videos');
+		}
+
+    for (video in losvideos) {
+		Generic.copyContent(Paths._video(video), Paths._video(video));
+    }
 
 		#if html5
 		FlxG.mouse.visible = false;
@@ -117,7 +135,7 @@ class Main extends Sprite
 		dateNow = dateNow.replace(" ", "_");
 		dateNow = dateNow.replace(":", "'");
 
-		path = "./crash/" + "BadEnding_" + dateNow + ".txt";
+		path = Main.path + "crash/" + "BadEnding_" + dateNow + ".txt";
 
 		for (stackItem in callStack)
 		{
@@ -134,8 +152,8 @@ class Main extends Sprite
 			+ e.error
 			+ "\nPlease report this error to the GitHub page: https://github.com/ActualMandM/Doki-Doki-Takeover-BAD-ENDING\n\n> Crash Handler written by: sqirra-rng";
 
-		if (!FileSystem.exists("./crash/"))
-			FileSystem.createDirectory("./crash/");
+		if (!FileSystem.exists(Main.path + "crash/"))
+			FileSystem.createDirectory(Main.path + "crash/");
 
 		File.saveContent(path, errMsg + "\n");
 
