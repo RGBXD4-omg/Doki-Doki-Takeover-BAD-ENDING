@@ -57,7 +57,6 @@ class Paths
 				@:privateAccess
 				if (obj != null)
 				{
-					GPUFunctions.disposeTexturesByKey(key);
 					openfl.Assets.cache.removeBitmapData(key);
 					FlxG.bitmap._cache.remove(key);
 					obj.destroy();
@@ -81,7 +80,6 @@ class Paths
 			var obj = FlxG.bitmap._cache.get(key);
 			if (obj != null && !currentTrackedAssets.exists(key))
 			{
-				GPUFunctions.disposeTexturesByKey(key);
 				openfl.Assets.cache.removeBitmapData(key);
 				FlxG.bitmap._cache.remove(key);
 				obj.destroy();
@@ -93,6 +91,7 @@ class Paths
 		{
 			if (!localTrackedAssets.contains(key) && !dumpExclusions.contains(key) && key != null)
 			{
+				// trace('test: ' + dumpExclusions, key);
 				Assets.cache.clear(key);
 				currentTrackedSounds.remove(key);
 			}
@@ -184,7 +183,7 @@ class Paths
 		return 'assets/videos/$key.$VIDEO_EXT';
 	}
 
-	static public function sound(key:String, ?library:String):Dynamic
+    static public function sound(key:String, ?library:String):Sound
 	{
 		var sound:Sound = returnSound('sounds', key, library);
 		return sound;
@@ -195,7 +194,7 @@ class Paths
 		return sound(key + FlxG.random.int(min, max), library);
 	}
 
-	inline static public function music(key:String, ?library:String):Dynamic
+	inline static public function music(key:String, ?library:String):Sound
 	{
 		var file:Sound = returnSound('music', key, library);
 		return file;
@@ -203,14 +202,14 @@ class Paths
 
 	inline static public function voices(song:String):Any
 	{
-		var songKey:String = '${song.toLowerCase().replace(' ', '-')}/Voices';
+		var songKey:String = '${formatToSongPath(song)}/Voices';
 		var voices = returnSound('songs', songKey);
 		return voices;
 	}
 
 	inline static public function inst(song:String):Any
 	{
-		var songKey:String = '${song.toLowerCase().replace(' ', '-')}/Inst';
+		var songKey:String = '${formatToSongPath(song)}/Inst';
 		var inst = returnSound('songs', songKey);
 		return inst;
 	}
@@ -273,7 +272,11 @@ class Paths
 
 	inline static public function formatToSongPath(path:String)
 	{
-		return path.toLowerCase().replace(' ', '-');
+		var invalidChars = ~/[~&\\;:<>#]/;
+		var hideChars = ~/[.,'"%?!]/;
+
+		var path = invalidChars.split(path.replace(' ', '-')).join("-");
+		return hideChars.split(path).join("").toLowerCase();
 	}
 
 	// completely rewritten asset loading? fuck!
@@ -309,13 +312,22 @@ class Paths
 
 	public static function returnSound(path:String, key:String, ?library:String)
 	{
+	
 		// I hate this so god damn much
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
 		gottenPath = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
 		// trace(gottenPath);
 		if (!currentTrackedSounds.exists(gottenPath))
-			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath));
-		localTrackedAssets.push(key);
+		
+			{
+				var folder:String = '';
+				if (path == 'songs')
+					folder = 'songs:';
+
+				currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(folder + getPath('$path/$key.$SOUND_EXT', SOUND, library)));
+			}
+		
+		localTrackedAssets.push(gottenPath);
 		return currentTrackedSounds.get(gottenPath);
 	}
 }
