@@ -191,7 +191,6 @@ class FreeplayState extends MusicBeatState
 
 		var swag:Alphabet = new Alphabet(1, 0, "swag");
 
-
 		var textBG:FlxSprite = new FlxSprite(0, FlxG.height - 26).makeGraphic(FlxG.width, 26, 0xFF000000);
 		textBG.alpha = 0.6;
 		add(textBG);
@@ -207,6 +206,12 @@ class FreeplayState extends MusicBeatState
 		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
 		add(text);
+		
+		#if android
+		addVirtualPad(FULL, A_B);
+		addPadCamera();
+		#end
+		
 		super.create();
 	}
 
@@ -356,7 +361,7 @@ class FreeplayState extends MusicBeatState
 				isDiffSelect = true;
 				FlxG.sound.play(Paths.sound('confirmMenu'));
 				diffstuff.visible = true;
-				//Make difficulty thingie visible here
+				// Make difficulty thingie visible here
 			}
 		}
 		else if (controls.RESET)
@@ -475,16 +480,15 @@ class FreeplayState extends MusicBeatState
 		{
 			sayoritween.cancel();
 			natsukitween.cancel();
-			yuritween.cancel();	
+			yuritween.cancel();
 		}
-
 
 		switch (songs[curSelected].songName.toLowerCase())
 		{
 			case 'stagnant':
 				yuritween = FlxTween.tween(yuri, {x: 177}, 0.25);
 				natsukitween = FlxTween.tween(natsuki, {x: 37}, 0.25);
-				
+
 				yuritween = FlxTween.color(yuri, 0.25, yuri.color, 0xFF444444);
 				natsukitween = FlxTween.color(natsuki, 0.25, natsuki.color, 0xFF444444);
 				sayoritween = FlxTween.color(sayori, 0.25, sayori.color, 0xFFffffff);
@@ -510,7 +514,6 @@ class FreeplayState extends MusicBeatState
 				natsukitween = FlxTween.color(natsuki, 0.25, natsuki.color, 0xFF444444);
 				sayoritween = FlxTween.color(sayori, 0.25, sayori.color, 0xFF444444);
 		}
-
 	}
 
 	private function positionHighscore()

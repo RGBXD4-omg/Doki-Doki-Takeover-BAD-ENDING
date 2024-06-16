@@ -91,9 +91,13 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
+	
+	#if android
+		FlxG.android.preventDefaultKeys = [BACK];
+		#end
+	
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
-		
 		
 		var path = Paths.getPreloadPath("images/gfDanceTitle.json");
 		titleJSON = Json.parse(Assets.getText(path));

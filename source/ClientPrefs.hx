@@ -33,11 +33,13 @@ class ClientPrefs
 	public static var scoreZoom:Bool = true;
 	public static var noReset:Bool = false;
 	public static var healthBarAlpha:Float = 1;
-	public static var controllerMode:Bool = false;
+	public static var controllerMode:Bool = #if android true #else false #end;
 	public static var hitsoundVolume:Float = 0;
 	public static var autoPause:Bool = false;
 	public static var storycomplete:Bool = false;
 	public static var firststart:Bool = true;
+	public static var hitboxalpha:Float = 0.2;
+	public static var hitboxmode:String = 'New';
 	public static var gameplaySettings:Map<String, Dynamic> = [
 		'scrollspeed' => 1.0,
 		'scrolltype' => 'multiplicative',
@@ -118,7 +120,7 @@ class ClientPrefs
 		FlxG.save.data.firststart = firststart;
 		// FlxG.save.data.cursing = cursing;
 		// FlxG.save.data.violence = violence;
-		//FlxG.save.data.camZooms = camZooms;
+		// FlxG.save.data.camZooms = camZooms;
 		FlxG.save.data.noteOffset = noteOffset;
 		FlxG.save.data.hideHud = hideHud;
 		FlxG.save.data.arrowHSV = arrowHSV;
@@ -141,13 +143,17 @@ class ClientPrefs
 		FlxG.save.data.controllerMode = controllerMode;
 		FlxG.save.data.hitsoundVolume = hitsoundVolume;
 		FlxG.save.data.autoPause = autoPause;
+		
+		FlxG.save.data.hitboxmode = hitboxmode;
+		FlxG.save.data.hitboxalpha = hitboxalpha;
 
 		FlxG.save.data.language = language;
 
 		FlxG.save.flush();
 
 		var save:FlxSave = new FlxSave();
-		save.bind('controls_v2', CoolUtil.getSavePath()); // Placing this in a separate save so that it can be manually deleted without removing your Score and stuff
+		save.bind('controls_v2',
+			CoolUtil.getSavePath()); // Placing this in a separate save so that it can be manually deleted without removing your Score and stuff
 		save.data.customControls = keyBinds;
 		save.flush();
 		FlxG.log.add("Settings saved!");
@@ -155,6 +161,12 @@ class ClientPrefs
 
 	public static function loadPrefs()
 	{
+	if(FlxG.save.data.hitboxmode != null) {
+			hitboxmode = FlxG.save.data.hitboxmode;
+		}
+		if(FlxG.save.data.hitboxalpha != null) {
+			hitboxalpha = FlxG.save.data.hitboxalpha;
+		}
 		if (FlxG.save.data.downScroll != null)
 		{
 			downScroll = FlxG.save.data.downScroll;
@@ -225,7 +237,6 @@ class ClientPrefs
 
 				if (framerate < 60)
 					framerate = 60;
-
 				else if (framerate > 240)
 					framerate = 240;
 			}
@@ -242,19 +253,19 @@ class ClientPrefs
 			FlxG.fullscreen = fullscreen;
 		}
 		/*
-		if (FlxG.save.data.cursing != null)
-		{
-			cursing = FlxG.save.data.cursing;
-		}
-		if (FlxG.save.data.violence != null)
-		{
-			violence = FlxG.save.data.violence;
-		}
-		if (FlxG.save.data.camZooms != null)
-		{
-			camZooms = FlxG.save.data.camZooms;
-		}
-		*/
+			if (FlxG.save.data.cursing != null)
+			{
+				cursing = FlxG.save.data.cursing;
+			}
+			if (FlxG.save.data.violence != null)
+			{
+				violence = FlxG.save.data.violence;
+			}
+			if (FlxG.save.data.camZooms != null)
+			{
+				camZooms = FlxG.save.data.camZooms;
+			}
+		 */
 		if (FlxG.save.data.hideHud != null)
 		{
 			hideHud = FlxG.save.data.hideHud;
