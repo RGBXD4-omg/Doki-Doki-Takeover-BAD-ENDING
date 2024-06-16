@@ -16,7 +16,7 @@ import flixel.addons.transition.TransitionData;
 import haxe.Json;
 import openfl.display.Bitmap;
 import openfl.display.BitmapData;
-#if MODS_ALLOWED
+#if sys
 import sys.FileSystem;
 import sys.io.File;
 #end
@@ -82,6 +82,7 @@ class TitleState extends MusicBeatState
 	var lastKeysPressed:Array<FlxKey> = [];
 
 	var mustUpdate:Bool = false;
+
 	public static var loadedPrefs:Bool = false;
 
 	var titleJSON:TitleData;
@@ -93,61 +94,9 @@ class TitleState extends MusicBeatState
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
 
-		#if MODS_ALLOWED
-		// Just to load a mod on start up if ya got one. For mods that change the menu music and bg
-		if (FileSystem.exists("modsList.txt"))
-		{
-			var list:Array<String> = CoolUtil.listFromString(File.getContent("modsList.txt"));
-			var foundTheTop = false;
-			for (i in list)
-			{
-				var dat = i.split("|");
-				if (dat[1] == "1" && !foundTheTop)
-				{
-					foundTheTop = true;
-					Paths.currentModDirectory = dat[0];
-				}
-			}
-		}
-		#end
 
-		#if (desktop && MODS_ALLOWED)
-		var path = "mods/" + Paths.currentModDirectory + "/images/gfDanceTitle.json";
-		// trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path))
-		{
-			path = "mods/images/gfDanceTitle.json";
-		}
-		// trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path))
-		{
-			path = "assets/images/gfDanceTitle.json";
-		}
-		// trace(path, FileSystem.exists(path));
-		titleJSON = Json.parse(File.getContent(path));
-		#else
 		var path = Paths.getPreloadPath("images/gfDanceTitle.json");
 		titleJSON = Json.parse(Assets.getText(path));
-		#end
-
-		#if (polymod && !html5)
-		if (sys.FileSystem.exists('mods/'))
-		{
-			var folders:Array<String> = [];
-			for (file in sys.FileSystem.readDirectory('mods/'))
-			{
-				var path = haxe.io.Path.join(['mods/', file]);
-				if (sys.FileSystem.isDirectory(path))
-				{
-					folders.push(file);
-				}
-			}
-			if (folders.length > 0)
-			{
-				polymod.Polymod.init({modRoot: "mods", dirs: folders});
-			}
-		}
-		#end
 
 		FlxG.game.focusLostFramerate = 60;
 		FlxG.sound.muteKeys = muteKeys;
@@ -164,7 +113,6 @@ class TitleState extends MusicBeatState
 		swagShader = new ColorSwap();
 		super.create();
 
-
 		if (!loadedPrefs)
 		{
 			FlxG.save.bind('BadEnding', CoolUtil.getSavePath());
@@ -174,7 +122,6 @@ class TitleState extends MusicBeatState
 			trace(FlxG.save.data.firststart + ' First Start');
 			trace(FlxG.save.data.storycomplete + ' Story Complete');
 		}
-		
 
 		Highscore.load();
 
@@ -275,28 +222,12 @@ class TitleState extends MusicBeatState
 		gradient.screenCenter();
 		gradient.setGraphicSize(Std.int(gradient.width * 1.4));
 		add(gradient);
-		
 
 		logoBl = new FlxSprite(titleJSON.titlex, titleJSON.titley);
 
-		#if (desktop && MODS_ALLOWED)
-		var path = "mods/" + Paths.currentModDirectory + "/images/logoBumpin.png";
-		// trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path))
-		{
-			path = "mods/images/logoBumpin.png";
-		}
-		// trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path))
-		{
-			path = "assets/images/logoBumpin.png";
-		}
-		// trace(path, FileSystem.exists(path));
-		logoBl.frames = FlxAtlasFrames.fromSparrow(BitmapData.fromFile(path), File.getContent(StringTools.replace(path, ".png", ".xml")));
-		logoBl.setGraphicSize(Std.int(logoBl.width * titleJSON.titlescale));
-		#else
+	
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
-		#end
+		
 
 		logoBl.antialiasing = ClientPrefs.globalAntialiasing;
 		logoBl.animation.addByPrefix('bump', 'logo bumpin', 24, true);
@@ -306,24 +237,9 @@ class TitleState extends MusicBeatState
 		swagShader = new ColorSwap();
 		gfDance = new FlxSprite(titleJSON.gfx, titleJSON.gfy);
 
-		#if (desktop && MODS_ALLOWED)
-		var path = "mods/" + Paths.currentModDirectory + "/images/gfDanceTitle.png";
-		// trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path))
-		{
-			path = "mods/images/gfDanceTitle.png";
-			// trace(path, FileSystem.exists(path));
-		}
-		if (!FileSystem.exists(path))
-		{
-			path = "assets/images/gfDanceTitle.png";
-			// trace(path, FileSystem.exists(path));
-		}
-		gfDance.frames = FlxAtlasFrames.fromSparrow(BitmapData.fromFile(path), File.getContent(StringTools.replace(path, ".png", ".xml")));
-		gfDance.setGraphicSize(Std.int(gfDance.width * titleJSON.gfscale));
-		#else
+		
 		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
-		#end
+		
 		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 
@@ -333,24 +249,9 @@ class TitleState extends MusicBeatState
 		add(logoBl);
 
 		titleText = new FlxSprite(titleJSON.startx, titleJSON.starty);
-		#if (desktop && MODS_ALLOWED)
-		var path = "mods/" + Paths.currentModDirectory + "/images/titleEnter.png";
-		// trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path))
-		{
-			path = "mods/images/titleEnter.png";
-		}
-		// trace(path, FileSystem.exists(path));
-		if (!FileSystem.exists(path))
-		{
-			path = "assets/images/titleEnter.png";
-		}
-		// trace(path, FileSystem.exists(path));
-		titleText.frames = FlxAtlasFrames.fromSparrow(BitmapData.fromFile(path), File.getContent(StringTools.replace(path, ".png", ".xml")));
-		titleText.setGraphicSize(Std.int(titleText.width * titleJSON.startscale));
-		#else
+	
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
-		#end
+		
 		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24);
 		titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
 		titleText.antialiasing = ClientPrefs.globalAntialiasing;

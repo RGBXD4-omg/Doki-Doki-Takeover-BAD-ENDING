@@ -1,8 +1,10 @@
 package;
 
-import Sys.sleep;
 import lime.app.Application;
+#if desktop
+import Sys.sleep;
 import discord_rpc.DiscordRpc;
+#end
 #if LUA_ALLOWED
 import llua.Lua;
 import llua.State;
@@ -12,6 +14,7 @@ using StringTools;
 
 class DiscordClient
 {
+#if desktop
 	public function new()
 	{
 		trace("Discord Client starting...");
@@ -99,5 +102,6 @@ class DiscordClient
 				changePresence(details, state, smallImageKey, hasStartTimestamp, endTimestamp);
 			});
 	}
+	#end
 	#end
 }

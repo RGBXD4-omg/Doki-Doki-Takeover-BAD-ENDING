@@ -48,13 +48,10 @@ class CoolUtil
 	public static function coolTextFile(path:String):Array<String>
 	{
 		var daList:Array<String> = [];
-		#if sys
-		if (FileSystem.exists(path))
-			daList = File.getContent(path).trim().split('\n');
-		#else
+	
 		if (Assets.exists(path))
 			daList = Assets.getText(path).trim().split('\n');
-		#end
+		
 
 		for (i in 0...daList.length)
 		{
@@ -162,7 +159,8 @@ class CoolUtil
 		so Base Psych saves won't conflict with yours
 		@BeastlyGabi
 	**/
-	public static function getSavePath(folder:String = 'TeamTBD'):String {
+	public static function getSavePath(folder:String = 'TeamTBD'):String
+	{
 		@:privateAccess
 		return #if (flixel < "5.0.0") folder #else FlxG.stage.application.meta.get('company')
 			+ '/'
